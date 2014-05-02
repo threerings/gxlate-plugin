@@ -22,44 +22,44 @@ public abstract class BaseMojo extends AbstractMojo
      * The id of the google docs folder where the translation spreadsheet lives.
      */
     @Parameter(property="gxlate.folderId", required=true)
-    private String _folderId;
+    private String folderId;
 
     /**
      * The name of the spreadsheet to target, defaults to the first one found in the folder.
      */
     @Parameter(property="gxlate.docName")
-    private String _docName;
+    private String docName;
 
     /**
      * The directory in which to find properties files.
      */
     @Parameter(property="gxlate.propsDir", defaultValue=".")
-    private File _propsDir;
+    private File propsDir;
 
     /**
      * Comma separated list of language codes to translate. Each code corresponds to a spreadsheet
      * column and a properties file extension. TODO: describe the extension
      */
-    @Parameter(property="gxlate.languages")
-    private String _languages;
+    @Parameter(property="gxlate.languages", required=true)
+    private String languages;
 
     /**
      * Whether to just download the spreadsheet and print information on what needs to be done.
      */
     @Parameter(property="gxlate.checkOnly", defaultValue="false")
-    private boolean _checkOnly;
+    private boolean checkOnly;
 
     /**
      * The Google account name to log into.
      */
     @Parameter(property="google.username", required=true)
-    private String _username;
+    private String username;
 
     /**
      * The password for the Google account.
      */
     @Parameter(property="google.password", required=true)
-    private String _password;
+    private String password;
 
     /**
      * Opens the configured google docs folder.
@@ -67,8 +67,8 @@ public abstract class BaseMojo extends AbstractMojo
     protected Folder openFolder ()
         throws Exception
     {
-        getLog().info("Opening folder '" + _folderId + "'");
-        return Folder.open("gxlate-0.1", _username, _password, _folderId);
+        getLog().info("Opening folder '" + folderId + "'");
+        return Folder.open("gxlate-0.1", username, password, folderId);
     }
 
     /**
@@ -78,7 +78,7 @@ public abstract class BaseMojo extends AbstractMojo
         throws Exception
     {
         Folder folder = openFolder();
-        DocumentListEntry doc = requireEntry(folder.getSpreadsheets(), "document", _docName);
+        DocumentListEntry doc = requireEntry(folder.getSpreadsheets(), "document", docName);
         String docTitle = doc.getTitle().getPlainText();
         getLog().info(String.format("Searching for worksheet '%s' in '%s'", tabName, docTitle));
 
@@ -96,7 +96,7 @@ public abstract class BaseMojo extends AbstractMojo
         throws IOException
     {
         getLog().info("Finding English properties files");
-        return findAllProps(_propsDir, Lists.<File>newArrayList());
+        return findAllProps(propsDir, Lists.<File>newArrayList());
     }
 
     /**
@@ -107,7 +107,7 @@ public abstract class BaseMojo extends AbstractMojo
     {
         getLog().info("Loading English properties files");
         List<PropsFile> result = Lists.newArrayList();
-        for (File file : findAllProps(_propsDir, Lists.<File>newArrayList())) {
+        for (File file : findAllProps(propsDir, Lists.<File>newArrayList())) {
             result.add(new PropsFile(file));
         }
         return result;
