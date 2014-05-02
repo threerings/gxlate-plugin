@@ -1,0 +1,30 @@
+#!/bin/sh
+
+JAVA_ARGS="-Xmx1024m"
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -D*|-X*) JAVA_ARGS="$JAVA_ARGS $1";;
+        *) break;;
+    esac
+    shift
+done
+
+case `uname` in
+    CYGWIN*) PATH_SEP=\;;;
+    **) PATH_SEP=:;;
+esac
+
+cd `dirname $0`/.. || { echo "Oh no!"; exit 1; }
+
+CLASSPATH=dist/classes${PATH_SEP}dist/rsrc
+for jar in `find dist/lib -name *.jar`; do
+    CLASSPATH=$CLASSPATH$PATH_SEP$jar
+done
+
+class=$1; shift
+if [ ${class##*.} = $class ]; then
+    class=com.threerings.projectx.tools.xlate.$class
+fi
+
+export CLASSPATH
+java $JAVA_ARGS $class "$@"

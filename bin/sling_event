@@ -1,0 +1,5 @@
+#!/bin/sh
+
+here=`dirname $0`
+mode="$1"; shift
+exec $here/sxlate "$mode" ../../../sling/rsrc/ SLING_EVENT -R "$@"

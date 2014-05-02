@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+here=`dirname $0`
+mode="$1"; shift
+domain="$1"; shift
+
+resources=../../rsrc/i18n
+options=
+
+if [ $domain == SUPPORT ]; then
+    resources=../projectxsupport/src/gwt/
+    options=-R
+else
+    domain=GAME_CLIENT_$domain
+fi
+
+
+exec $here/sxlate "$mode" $resources $domain $options "$@"
