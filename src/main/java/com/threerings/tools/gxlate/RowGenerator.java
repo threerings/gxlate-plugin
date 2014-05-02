@@ -1,4 +1,4 @@
-package com.threerings.projectx.tools.xlate;
+package com.threerings.tools.gxlate;
 
 import java.util.List;
 import java.util.Map;
@@ -8,13 +8,13 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import com.threerings.projectx.tools.xlate.props.PropsFile;
-import com.threerings.projectx.tools.xlate.props.PropsFile.Entry;
-import com.threerings.projectx.tools.xlate.spreadsheet.Table;
+import com.threerings.tools.gxlate.props.PropsFile;
+import com.threerings.tools.gxlate.props.PropsFile.Entry;
+import com.threerings.tools.gxlate.spreadsheet.Table;
 
-import static com.threerings.projectx.tools.xlate.Rules.ID;
-import static com.threerings.projectx.tools.xlate.Rules.COMMENT;
-import static com.threerings.projectx.tools.xlate.Rules.ELSE;
+import static com.threerings.tools.gxlate.Rules.COMMENT;
+import static com.threerings.tools.gxlate.Rules.ELSE;
+import static com.threerings.tools.gxlate.Rules.ID;
 
 /**
  * Transforms a property from a {@link PropsFile} into a field mapping using some custom project x

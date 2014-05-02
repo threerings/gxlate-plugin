@@ -1,4 +1,4 @@
-package com.threerings.projectx.tools.xlate;
+package com.threerings.tools.gxlate;
 
 /**
  * A language supported by the project x translation spreadsheet.

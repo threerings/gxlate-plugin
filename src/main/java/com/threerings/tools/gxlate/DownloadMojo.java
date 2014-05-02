@@ -1,4 +1,4 @@
-package com.threerings.projectx.tools.xlate;
+package com.threerings.tools.gxlate;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;

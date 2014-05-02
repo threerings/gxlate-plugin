@@ -1,4 +1,4 @@
-package com.threerings.projectx.tools.xlate.props;
+package com.threerings.tools.gxlate.props;
 
 /**
  * Defines how to translate strings.

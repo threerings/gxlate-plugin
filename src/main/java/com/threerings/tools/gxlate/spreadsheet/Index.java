@@ -1,4 +1,4 @@
-package com.threerings.projectx.tools.xlate.spreadsheet;
+package com.threerings.tools.gxlate.spreadsheet;
 
 import java.util.List;
 import java.util.Map;

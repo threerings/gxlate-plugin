@@ -1,4 +1,4 @@
-package com.threerings.projectx.tools.xlate;
+package com.threerings.tools.gxlate;
 
 /**
  * Enumerates the fields expected in a project x translation spreadsheet. Specifies the column

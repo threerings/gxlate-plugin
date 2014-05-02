@@ -1,4 +1,4 @@
-package com.threerings.projectx.tools.xlate;
+package com.threerings.tools.gxlate;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,9 +12,9 @@ import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import com.threerings.projectx.tools.xlate.props.PropsFile;
-import com.threerings.projectx.tools.xlate.spreadsheet.Folder;
-import com.threerings.projectx.tools.xlate.spreadsheet.Table;
+import com.threerings.tools.gxlate.props.PropsFile;
+import com.threerings.tools.gxlate.spreadsheet.Folder;
+import com.threerings.tools.gxlate.spreadsheet.Table;
 
 public abstract class BaseMojo extends AbstractMojo
 {

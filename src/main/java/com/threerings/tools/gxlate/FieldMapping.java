@@ -1,4 +1,4 @@
-package com.threerings.projectx.tools.xlate;
+package com.threerings.tools.gxlate;
 
 import java.io.IOException;
 import java.util.Map;
@@ -6,8 +6,9 @@ import java.util.Set;
 
 import com.google.common.collect.Maps;
 import com.google.gdata.util.ServiceException;
-import com.threerings.projectx.tools.xlate.spreadsheet.Row;
-import com.threerings.projectx.tools.xlate.spreadsheet.Table;
+
+import com.threerings.tools.gxlate.spreadsheet.Row;
+import com.threerings.tools.gxlate.spreadsheet.Table;
 
 /**
  * Represents a mapping of spreadsheet headers to string values. Performs logic of updating the

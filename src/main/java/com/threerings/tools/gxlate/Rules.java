@@ -1,4 +1,4 @@
-package com.threerings.projectx.tools.xlate;
+package com.threerings.tools.gxlate;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,8 +11,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import com.threerings.projectx.tools.xlate.props.PropsFile;
-import com.threerings.projectx.tools.xlate.props.PropsFile.Entry;
+import com.threerings.tools.gxlate.props.PropsFile;
+import com.threerings.tools.gxlate.props.PropsFile.Entry;
 
 public class Rules
 {

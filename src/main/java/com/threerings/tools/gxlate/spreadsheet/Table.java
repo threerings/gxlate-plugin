@@ -1,4 +1,4 @@
-package com.threerings.projectx.tools.xlate.spreadsheet;
+package com.threerings.tools.gxlate.spreadsheet;
 
 import java.io.IOException;
 import java.text.DateFormat;

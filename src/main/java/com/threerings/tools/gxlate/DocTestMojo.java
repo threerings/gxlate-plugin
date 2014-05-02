@@ -1,4 +1,4 @@
-package com.threerings.projectx.tools.xlate;
+package com.threerings.tools.gxlate;
 
 import java.util.Map;
 import java.util.Set;
@@ -17,9 +17,9 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import com.threerings.projectx.tools.xlate.spreadsheet.Folder;
-import com.threerings.projectx.tools.xlate.spreadsheet.Row;
-import com.threerings.projectx.tools.xlate.spreadsheet.Table;
+import com.threerings.tools.gxlate.spreadsheet.Folder;
+import com.threerings.tools.gxlate.spreadsheet.Row;
+import com.threerings.tools.gxlate.spreadsheet.Table;
 
 @Mojo(name="doc-test")
 public class DocTestMojo extends BaseMojo

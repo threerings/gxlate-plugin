@@ -1,4 +1,4 @@
-package com.threerings.projectx.tools.xlate;
+package com.threerings.tools.gxlate;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +8,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 
-import com.threerings.projectx.tools.xlate.props.PropsFile;
+import com.threerings.tools.gxlate.props.PropsFile;
 
 /**
  * Goal which reads all configured props files to confirm they are all readable.
