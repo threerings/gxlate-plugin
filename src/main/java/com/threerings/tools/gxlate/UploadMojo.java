@@ -7,7 +7,6 @@ import java.util.Set;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.gdata.data.docs.DocumentListEntry;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -16,7 +15,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 import com.threerings.tools.gxlate.props.PropsFile;
 import com.threerings.tools.gxlate.spreadsheet.DeleteVerifier;
-import com.threerings.tools.gxlate.spreadsheet.Folder;
 import com.threerings.tools.gxlate.spreadsheet.Index;
 import com.threerings.tools.gxlate.spreadsheet.Row;
 import com.threerings.tools.gxlate.spreadsheet.Table;
@@ -58,10 +56,9 @@ public class UploadMojo extends BaseMojo
     private void run ()
         throws Exception
     {
-        Folder folder = openFolder();
-        DocumentListEntry doc = loadDocument(folder);
+        Document doc = new Document();
         for (PropsFile source : loadAllProps()) {
-            Table table = loadTable(folder, doc, Bundle.baseName(source.getFile().getName()));
+            Table table = doc.loadTable(Bundle.baseName(source.getFile().getName()));
             Index index = new Index(table, Field.ID.getColumnName());
             for (Domain.Row genRow : getFilteredRows(source)) {
                 if (genRow.status == Rules.Status.IGNORE || genRow.status == Rules.Status.OMIT) {

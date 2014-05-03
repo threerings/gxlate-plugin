@@ -84,6 +84,40 @@ public abstract class BaseMojo extends AbstractMojo
         }
     }
 
+    /**
+     * Opens the configured google docs folder and document. Provides a method for opening a
+     * worksheet.
+     */
+    public class Document
+    {
+        public final Folder folder;
+        public final DocumentListEntry doc;
+
+        public Document ()
+            throws Exception
+        {
+            getLog().info("Opening folder '" + folderId + "'");
+            folder = Folder.open("gxlate-0.1", username, password, folderId);
+            doc = requireEntry(folder.getSpreadsheets(), "document", docName);
+        }
+
+        /**
+         * Downloads a worksheet from google docs and converts to a {@code Table}.
+         */
+        protected Table loadTable (String tabName)
+            throws Exception
+        {
+            String docTitle = doc.getTitle().getPlainText();
+            getLog().debug(String.format("Searching for worksheet '%s' in '%s'", tabName, docTitle));
+
+            WorksheetEntry worksheet = requireEntry(folder.getWorksheets(doc), "worksheet", tabName);
+            String worksheetTitle = worksheet.getTitle().getPlainText();
+            getLog().info(String.format("Downloading '%s' of '%s'", worksheetTitle, docTitle));
+
+            return new Table(worksheet);
+        }
+    }
+
     protected boolean checkOnly ()
     {
         return checkOnly;
@@ -92,16 +126,6 @@ public abstract class BaseMojo extends AbstractMojo
     protected Set<Language> languages ()
     {
         return languages;
-    }
-
-    /**
-     * Opens the configured google docs folder.
-     */
-    protected Folder openFolder ()
-        throws Exception
-    {
-        getLog().info("Opening folder '" + folderId + "'");
-        return Folder.open("gxlate-0.1", username, password, folderId);
     }
 
     protected Iterable<Row> getFilteredRows (PropsFile source)
@@ -120,31 +144,6 @@ public abstract class BaseMojo extends AbstractMojo
         }
         return ruleSet.add(domain, name, "", rrules.toArray(new Rules.Rule[]{})).
                 get(domain, source, 0).generate();
-    }
-
-    /**
-     * Downloads the configured spreadsheet document from google docs.
-     */
-    protected DocumentListEntry loadDocument (Folder folder)
-        throws Exception
-    {
-        return requireEntry(folder.getSpreadsheets(), "document", docName);
-    }
-
-    /**
-     * Downloads a spreadsheet tab from google docs.
-     */
-    protected Table loadTable (Folder folder, DocumentListEntry doc, String tabName)
-        throws Exception
-    {
-        String docTitle = doc.getTitle().getPlainText();
-        getLog().debug(String.format("Searching for worksheet '%s' in '%s'", tabName, docTitle));
-
-        WorksheetEntry worksheet = requireEntry(folder.getWorksheets(doc), "worksheet", tabName);
-        String worksheetTitle = worksheet.getTitle().getPlainText();
-        getLog().info(String.format("Downloading '%s' of '%s'", worksheetTitle, docTitle));
-
-        return new Table(worksheet);
     }
 
     /**
