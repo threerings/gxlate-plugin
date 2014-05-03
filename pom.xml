@@ -53,6 +53,11 @@
       <artifactId>guava</artifactId>
       <version>14.0.1</version>
     </dependency>
+    <dependency>
+      <groupId>javax.mail</groupId>
+      <artifactId>mail</artifactId>
+      <version>1.4.1</version>
+    </dependency>
 
     <!-- Maven wiring dependencies -->
     <dependency>
