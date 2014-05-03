@@ -16,6 +16,7 @@ import com.google.gdata.util.common.base.Objects;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import com.threerings.tools.gxlate.Domain.Row;
 import com.threerings.tools.gxlate.props.PropsFile;
 import com.threerings.tools.gxlate.spreadsheet.Folder;
 import com.threerings.tools.gxlate.spreadsheet.Table;
@@ -65,6 +66,27 @@ public abstract class BaseMojo extends AbstractMojo
     @Parameter(property="google.password", required=true)
     private String password;
 
+    /**
+     * Rules to apply to source files. For each file processed, if the base name of the file
+     * matches the {@code <file>} member of a rule in the list, then for each property processed,
+     * if the property name matches the {@code <exclude>} member of the rule, then that property
+     * is not uploaded to google docs. During download, the property is copied from the english
+     * to all other languages.
+     */
+    @Parameter()
+    private List<SimpleRule> rules;
+
+    public static class SimpleRule
+    {
+        public String file;
+        public String exclude;
+
+        public Rules.Rule toRule ()
+        {
+            return Rules.ID.matches(exclude).ignore();
+        }
+    }
+
     protected boolean checkOnly ()
     {
         return checkOnly;
@@ -83,6 +105,23 @@ public abstract class BaseMojo extends AbstractMojo
     {
         getLog().info("Opening folder '" + folderId + "'");
         return Folder.open("gxlate-0.1", username, password, folderId);
+    }
+
+    protected Iterable<Row> getFilteredRows (PropsFile source)
+    {
+        Domain domain = new Domain.Simple();
+        String name = source.getFile().getName();
+        Domain.RuleSet ruleSet = new Domain.RuleSet();
+        List<Rules.Rule> rrules = Lists.newArrayList();
+        if (rules != null) {
+            for (SimpleRule rule : rules) {
+                if (rule.file.equals(baseName(name))) {
+                    rrules.add(Rules.ID.matches(rule.exclude).ignore());
+                }
+            }
+        }
+        return ruleSet.add(domain, name, "", rrules.toArray(new Rules.Rule[]{})).
+                get(domain, source, 0).generate();
     }
 
     /**

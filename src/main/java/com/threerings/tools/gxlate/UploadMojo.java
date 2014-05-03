@@ -63,7 +63,7 @@ public class UploadMojo extends BaseMojo
         for (PropsFile source : loadAllProps()) {
             Table table = loadTable(folder, doc, baseName(source.getFile().getName()));
             Index index = new Index(table, Field.ID.getColumnName());
-            for (Domain.Row genRow : Domain.RuleSet.includeAllRows(source)) {
+            for (Domain.Row genRow : getFilteredRows(source)) {
                 if (genRow.status == Rules.Status.IGNORE || genRow.status == Rules.Status.OMIT) {
                     continue;
                 }
