@@ -4,14 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
 import com.google.gdata.data.BaseEntry;
 import com.google.gdata.data.docs.DocumentListEntry;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
-import com.google.gdata.util.common.base.Objects;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -69,7 +66,7 @@ public abstract class BaseMojo extends AbstractMojo
     /**
      * Rules to apply to source files. For each file processed, if the base name of the file
      * matches the {@code <file>} member of a rule in the list, then for each property processed,
-     * if the property name matches the {@code <exclude>} member of the rule, then that property
+     * if the property name matches the {@code <ignore>} member of the rule, then that property
      * is not uploaded to google docs. During download, the property is copied from the english
      * to all other languages.
      */
@@ -111,12 +108,13 @@ public abstract class BaseMojo extends AbstractMojo
     {
         Domain domain = new Domain.Simple();
         String name = source.getFile().getName();
+        String base = Bundle.baseName(name);
         Domain.RuleSet ruleSet = new Domain.RuleSet();
         List<Rules.Rule> rrules = Lists.newArrayList();
         if (rules != null) {
             for (SimpleRule rule : rules) {
-                if (rule.file.equals(baseName(name))) {
-                    rrules.add(Rules.ID.matches(rule.exclude).ignore());
+                if (rule.file.equals(base)) {
+                    rrules.add(Rules.ID.matches(rule.ignore).ignore());
                 }
             }
         }
@@ -173,8 +171,6 @@ public abstract class BaseMojo extends AbstractMojo
         return result;
     }
 
-    private static Pattern PROPS = Pattern.compile("(.*?)(_(..))?\\.properties(\\.in)?$");
-
     private static List<File> findAllProps (File dir, List<File> files)
         throws IOException
     {
@@ -184,24 +180,14 @@ public abstract class BaseMojo extends AbstractMojo
         }
         for (File file : listing) {
             if (file.isFile()) {
-                Matcher m = PROPS.matcher(file.getName());
-                if (m.matches()) {
-                    String lang = Objects.firstNonNull(m.group(3), "");
-                    if (lang.isEmpty() || lang.equalsIgnoreCase(Language.EN.name())) {
-                        files.add(file);
-                    }
+                if (Bundle.isEnglish(file.getName())) {
+                    files.add(file);
                 }
             } else if (file.isDirectory()) {
                 findAllProps(file, files);
             }
         }
         return files;
-    }
-
-    protected static String baseName (String name)
-    {
-        Matcher m = PROPS.matcher(name);
-        return m.matches() ? m.group(1) : null;
     }
 
     protected static <E extends BaseEntry<E>> E requireEntry (
