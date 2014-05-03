@@ -65,6 +65,11 @@ public abstract class BaseMojo extends AbstractMojo
     @Parameter(property="google.password", required=true)
     private String password;
 
+    protected boolean checkOnly ()
+    {
+        return checkOnly;
+    }
+
     protected Set<Language> languages ()
     {
         return languages;
@@ -81,15 +86,22 @@ public abstract class BaseMojo extends AbstractMojo
     }
 
     /**
-     * Downloads a spreadsheet tab from google docs.
+     * Downloads the configured spreadsheet document from google docs.
      */
-    protected Table loadTable (String tabName)
+    protected DocumentListEntry loadDocument (Folder folder)
         throws Exception
     {
-        Folder folder = openFolder();
-        DocumentListEntry doc = requireEntry(folder.getSpreadsheets(), "document", docName);
+        return requireEntry(folder.getSpreadsheets(), "document", docName);
+    }
+
+    /**
+     * Downloads a spreadsheet tab from google docs.
+     */
+    protected Table loadTable (Folder folder, DocumentListEntry doc, String tabName)
+        throws Exception
+    {
         String docTitle = doc.getTitle().getPlainText();
-        getLog().info(String.format("Searching for worksheet '%s' in '%s'", tabName, docTitle));
+        getLog().debug(String.format("Searching for worksheet '%s' in '%s'", tabName, docTitle));
 
         WorksheetEntry worksheet = requireEntry(folder.getWorksheets(doc), "worksheet", tabName);
         String worksheetTitle = worksheet.getTitle().getPlainText();

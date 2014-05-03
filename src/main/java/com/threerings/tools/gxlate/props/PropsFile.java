@@ -383,7 +383,7 @@ public class PropsFile
     }
 
     protected File _file;
-    Properties _properties;
+    protected Properties _properties;
     protected List<Line> _lines = Lists.newArrayList();
 
     protected static Pattern RE_BANNER = Pattern.compile("\\s*#\\.+\\s*");
