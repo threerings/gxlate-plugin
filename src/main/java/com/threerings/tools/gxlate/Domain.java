@@ -13,7 +13,8 @@ import com.threerings.tools.gxlate.props.PropsFile.Entry;
 import com.threerings.tools.gxlate.spreadsheet.Table;
 
 /**
- * Defines the target application being translated. For example, an app or a web server.
+ * Defines the target application or part of the application being translated. Roughly corresponds
+ * to a tab in a spreadsheet.
  */
 public interface Domain
 {
@@ -57,7 +58,7 @@ public interface Domain
         }
 
         /**
-         * Adds the rules fto be applied for the given values.
+         * Adds the rules to be applied for the given values.
          * @param domain the domain that the rules apply to
          * @param fileName the props file that the rules apply to
          * @param scope the tab that the resulting rows should be placed in
