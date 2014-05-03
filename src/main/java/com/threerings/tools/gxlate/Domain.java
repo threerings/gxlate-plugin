@@ -23,6 +23,14 @@ public interface Domain
      */
     boolean isGwt ();
 
+    public static class Simple implements Domain
+    {
+        @Override public boolean isGwt ()
+        {
+            return false;
+        }
+    }
+
     /**
      * A row to be inserted into a spreadsheet.
      */
@@ -47,6 +55,14 @@ public interface Domain
      */
     public static class RuleSet
     {
+        public static Iterable<Row> includeAllRows (PropsFile source)
+        {
+            Domain domain = new Domain.Simple();
+            String name = source.getFile().getName();
+            Domain.RuleSet ruleSet = new Domain.RuleSet().add(domain, name, "");
+            return ruleSet.get(domain, source, 0).generate();
+        }
+
         /**
          * Adds global rules, typically used to ignore programmatic property values.
          */
