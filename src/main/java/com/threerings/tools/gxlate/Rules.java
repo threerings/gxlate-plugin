@@ -72,7 +72,7 @@ public class Rules
      */
     public enum Status
     {
-        /** Generate  row for the property. */
+        /** Generate a row for the property. */
         NORMAL,
 
         /** Always use the English version, copy it directly from the source. */

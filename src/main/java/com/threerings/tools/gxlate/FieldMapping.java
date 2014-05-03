@@ -75,7 +75,7 @@ public class FieldMapping
 
     /**
      * Creates a new field mapping. This is an internal constructor since normally this class is
-     * only created from the {@link RowGenerator} factory.
+     * only created from the {@link ProjectX} factory.
      */
     FieldMapping (Map<Field, String> values)
     {
