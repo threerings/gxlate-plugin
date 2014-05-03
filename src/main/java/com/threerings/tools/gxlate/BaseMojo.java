@@ -76,11 +76,11 @@ public abstract class BaseMojo extends AbstractMojo
     public static class SimpleRule
     {
         public String file;
-        public String exclude;
+        public String ignore;
 
         public Rules.Rule toRule ()
         {
-            return Rules.ID.matches(exclude).ignore();
+            return Rules.ID.matches(ignore).ignore();
         }
     }
 
