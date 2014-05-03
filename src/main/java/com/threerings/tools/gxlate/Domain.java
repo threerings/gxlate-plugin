@@ -50,11 +50,12 @@ public interface Domain
         /**
          * Adds global rules, typically used to ignore programmatic property values.
          */
-        public void addGlobal (Rules.Rule... rules)
+        public RuleSet addGlobal (Rules.Rule... rules)
         {
             for (Rules.Rule rule : rules) {
                 _globalRules.add(rule);
             }
+            return this;
         }
 
         /**
@@ -64,13 +65,14 @@ public interface Domain
          * @param scope the tab that the resulting rows should be placed in
          * @param rules describe how to include, exclude and convert properties to rows
          */
-        public void add (Domain domain, String fileName, String scope, Rules.Rule... rules)
+        public RuleSet add (Domain domain, String fileName, String scope, Rules.Rule... rules)
         {
             Map<String, Rules.Scope> scopes = _domains.get(domain);
             if (scopes == null) {
                 _domains.put(domain, scopes = Maps.newHashMap());
             }
             scopes.put(fileName, new Rules.Scope(fileName, scope, rules));
+            return this;
         }
 
         /**
