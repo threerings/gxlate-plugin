@@ -3,11 +3,14 @@ package com.threerings.tools.gxlate;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
 import com.google.gdata.data.BaseEntry;
 import com.google.gdata.data.docs.DocumentListEntry;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
+import com.google.gdata.util.common.base.Objects;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -113,6 +116,8 @@ public abstract class BaseMojo extends AbstractMojo
         return result;
     }
 
+    private static Pattern PROPS = Pattern.compile("(.*?)(_(..))?\\.properties(\\.in)?$");
+
     private static List<File> findAllProps (File dir, List<File> files)
         throws IOException
     {
@@ -121,16 +126,25 @@ public abstract class BaseMojo extends AbstractMojo
             throw new IOException("Directory not listable: " + dir);
         }
         for (File file : listing) {
-            if (file.isFile() && file.getName().matches(".*.properties(\\.in)?$")) {
-                if (!file.getName().matches(".*_..\\.properties(\\.in)?$") ||
-                        file.getName().matches(".*_en\\.properties(\\.in)?$")) {
-                    files.add(file);
+            if (file.isFile()) {
+                Matcher m = PROPS.matcher(file.getName());
+                if (m.matches()) {
+                    String lang = Objects.firstNonNull(m.group(3), "");
+                    if (lang.isEmpty() || lang.equals(Language.ENGLISH.code)) {
+                        files.add(file);
+                    }
                 }
             } else if (file.isDirectory()) {
                 findAllProps(file, files);
             }
         }
         return files;
+    }
+
+    protected static String baseName (String name)
+    {
+        Matcher m = PROPS.matcher(name);
+        return m.matches() ? m.group(1) : null;
     }
 
     protected static <E extends BaseEntry<E>> E requireEntry (
