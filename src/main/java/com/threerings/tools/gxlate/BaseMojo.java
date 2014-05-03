@@ -3,6 +3,7 @@ package com.threerings.tools.gxlate;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,7 +45,7 @@ public abstract class BaseMojo extends AbstractMojo
      * column and a properties file extension. TODO: describe the extension
      */
     @Parameter(property="gxlate.languages", required=true)
-    private String languages;
+    private Set<Language> languages;
 
     /**
      * Whether to just download the spreadsheet and print information on what needs to be done.
@@ -63,6 +64,11 @@ public abstract class BaseMojo extends AbstractMojo
      */
     @Parameter(property="google.password", required=true)
     private String password;
+
+    protected Set<Language> languages ()
+    {
+        return languages;
+    }
 
     /**
      * Opens the configured google docs folder.
@@ -130,7 +136,7 @@ public abstract class BaseMojo extends AbstractMojo
                 Matcher m = PROPS.matcher(file.getName());
                 if (m.matches()) {
                     String lang = Objects.firstNonNull(m.group(3), "");
-                    if (lang.isEmpty() || lang.equals(Language.ENGLISH.code)) {
+                    if (lang.isEmpty() || lang.equalsIgnoreCase(Language.EN.name())) {
                         files.add(file);
                     }
                 }

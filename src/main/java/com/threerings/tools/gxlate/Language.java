@@ -4,20 +4,14 @@ package com.threerings.tools.gxlate;
  * A language supported by the project x translation spreadsheet.
  */
 public enum Language {
-    FRENCH("fr"), ITALIAN("it"), GERMAN("de"), SPANISH("es"), CHINESE("zh"), KOREAN("ko"),
-        JAPANESE("ja");
-
-    /**
-     * The two letter code for this language.
-     */
-    public final String code;
+    EN, FR, IT, DE, ES, ZH, KO, JA;
 
     /**
      * The name of this language's column in the translation spreadsheet.
      */
     public String getHeaderStem ()
     {
-        return code.toUpperCase();
+        return name().toUpperCase();
     }
 
     /**
@@ -26,16 +20,6 @@ public enum Language {
      */
     public static Language findByCode (String shortCode)
     {
-        for (Language l : values()) {
-            if (l.code.equals(shortCode)) {
-                return l;
-            }
-        }
-        throw new IllegalArgumentException("No language found with short code " + shortCode);
-    }
-
-    Language (String code)
-    {
-        this.code = code;
+        return valueOf(shortCode.toUpperCase());
     }
 }
