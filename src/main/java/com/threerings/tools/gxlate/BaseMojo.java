@@ -128,6 +128,11 @@ public abstract class BaseMojo extends AbstractMojo
         return languages;
     }
 
+    protected DefaultTranslator init (DefaultTranslator translator)
+    {
+        return translator.setCheckOnly(checkOnly()).setLog(getLog());
+    }
+
     protected Iterable<Row> getFilteredRows (PropsFile source)
     {
         Domain domain = new Domain.Simple();
