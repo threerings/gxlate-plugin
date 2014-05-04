@@ -51,6 +51,10 @@ public class UploadMojo extends BaseMojo
         } catch (Exception ex) {
             throw new MojoExecutionException("", ex);
         }
+
+        if (!failures.isEmpty()) {
+            throw new MojoFailureException("Some operations failed (see log)");
+        }
     }
 
     private void run ()
