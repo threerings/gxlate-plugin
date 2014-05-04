@@ -14,6 +14,11 @@ public enum Language {
         return name().toUpperCase();
     }
 
+    public String lowerName ()
+    {
+        return name().toLowerCase();
+    }
+
     /**
      * Finds the language with the given two letter code.
      * @throws IllegalArgumentException if no such language is found
