@@ -96,8 +96,7 @@ public abstract class BaseMojo extends AbstractMojo
         public Document ()
             throws Exception
         {
-            getLog().info("Opening folder '" + folderId + "'");
-            folder = Folder.open("gxlate-0.1", username, password, folderId);
+            folder = openFolder();
             doc = requireEntry(folder.getSpreadsheets(), "document", docName);
         }
 
@@ -126,6 +125,13 @@ public abstract class BaseMojo extends AbstractMojo
     protected Set<Language> languages ()
     {
         return languages;
+    }
+
+    protected Folder openFolder ()
+        throws Exception
+    {
+        getLog().info("Opening folder '" + folderId + "'");
+        return Folder.open("gxlate-0.1", username, password, folderId);
     }
 
     protected DefaultTranslator init (DefaultTranslator translator)
