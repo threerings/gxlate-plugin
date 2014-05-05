@@ -1,5 +1,0 @@
-#!/bin/sh
-
-here=`dirname $0`
-mode="$1"; shift
-exec $here/sxlate "$mode" ../../../sling/src/main/gwt/com/threerings/sling/ SLING -R "$@"
