@@ -1,3 +1,8 @@
+//
+// Google Translation Plugin - maven plugin facilitating localization using google docs
+// Copyright (c) 2014, Three Rings Design, Inc. - All rights reserved.
+// http://github.com/threerings/gxlate-plugin/blob/master/LICENSE
+
 package com.threerings.tools.gxlate;
 
 import java.io.IOException;
