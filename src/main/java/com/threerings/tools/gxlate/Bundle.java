@@ -22,7 +22,7 @@ public class Bundle
             return false;
         }
         String lang = Objects.firstNonNull(m.group(3), "");
-        return lang.isEmpty() || lang.equalsIgnoreCase(Language.EN.name());
+        return lang.isEmpty() || lang.equalsIgnoreCase(Language.EN.code());
     }
 
     public static String setLanguage (String name, Language language)

@@ -52,7 +52,7 @@ public abstract class BaseMojo extends AbstractMojo
      * column and a properties file extension. TODO: describe the extension
      */
     @Parameter(property="gxlate.languages", required=true)
-    private Set<Language> languages;
+    private String languages;
 
     /**
      * Whether to just download the spreadsheet and print information on what needs to be done.
@@ -81,6 +81,9 @@ public abstract class BaseMojo extends AbstractMojo
      */
     @Parameter()
     private List<SimpleRule> rules;
+
+    /** Derived from the input parameter {@link #languages} by the base class' execute. */
+    private final Set<Language> languageSet = Sets.newHashSet();
 
     /** Accumulation of errors during execution. If any failures are present at the end, the
      * build is failed. */
@@ -135,6 +138,10 @@ public abstract class BaseMojo extends AbstractMojo
     {
         Preconditions.checkState(failures.isEmpty());
 
+        for (String langCode : languages.split(",")) {
+            languageSet.add(new Language(langCode.trim()));
+        }
+
         try {
             run();
         } catch (Exception ex) {
@@ -155,7 +162,7 @@ public abstract class BaseMojo extends AbstractMojo
 
     protected Set<Language> languages ()
     {
-        return languages;
+        return languageSet;
     }
 
     protected Folder openFolder ()

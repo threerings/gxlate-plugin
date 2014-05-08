@@ -36,7 +36,7 @@ public class DownloadMojo extends BaseMojo
                 Map<Index.Key, Domain.Row> generatedFields = Maps.newHashMap();
                 for (Domain.Row row : getFilteredRows(source)) {
                     generatedFields.put(index.key(
-                        row.fields.toStringMap(Sets.immutableEnumSet(language))), row);
+                        row.fields.toStringMap(Collections.singleton(language))), row);
                 }
 
                 File dest = Bundle.setLanguage(source.getFile(), language);
