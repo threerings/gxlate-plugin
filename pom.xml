@@ -111,6 +111,11 @@
       <name>OOO Maven Repo</name>
       <url>file:///export/maven-repository</url>
     </repository>
+    <snapshotRepository>
+      <id>ooo-build-repo</id>
+      <name>OOO Maven Repo</name>
+      <url>file:///export/maven-repository</url>
+    </snapshotRepository>
   </distributionManagement>
 
   <build>
