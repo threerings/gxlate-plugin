@@ -107,13 +107,13 @@ public abstract class BaseMojo extends AbstractMojo
     public class Document
     {
         public final Folder folder;
-        public final DocumentListEntry doc;
+        public final DocumentListEntry entry;
 
         public Document ()
             throws Exception
         {
             folder = openFolder();
-            doc = requireEntry(folder.getSpreadsheets(), "document", docName);
+            entry = requireEntry(folder.getSpreadsheets(), "document", docName);
         }
 
         /**
@@ -122,10 +122,10 @@ public abstract class BaseMojo extends AbstractMojo
         protected Table loadTable (String tabName)
             throws Exception
         {
-            String docTitle = doc.getTitle().getPlainText();
+            String docTitle = entry.getTitle().getPlainText();
             getLog().debug(String.format("Searching for worksheet '%s' in '%s'", tabName, docTitle));
 
-            WorksheetEntry worksheet = requireEntry(folder.getWorksheets(doc), "worksheet", tabName);
+            WorksheetEntry worksheet = requireEntry(folder.getWorksheets(entry), "worksheet", tabName);
             String worksheetTitle = worksheet.getTitle().getPlainText();
             getLog().info(String.format("Downloading '%s' of '%s'", worksheetTitle, docTitle));
 
