@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 
 import com.threerings.tools.gxlate.props.PropsFile;
@@ -22,8 +21,8 @@ import com.threerings.tools.gxlate.props.PropsFile;
 public class CheckPropsMojo extends BaseMojo
 {
     @Override
-    public void execute ()
-        throws MojoExecutionException, MojoFailureException
+    public void run ()
+        throws Exception
     {
         List<File> props;
         try {

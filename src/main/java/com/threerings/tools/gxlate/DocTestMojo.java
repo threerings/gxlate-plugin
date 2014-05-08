@@ -42,17 +42,7 @@ public class DocTestMojo extends BaseMojo
     private String _updateCell;
 
     @Override
-    public void execute ()
-        throws MojoExecutionException, MojoFailureException
-    {
-        try {
-            run();
-        } catch (Exception ex) {
-            throw new MojoExecutionException("Uh oh: " + ex.getMessage());
-        }
-    }
-
-    private void run ()
+    protected void run ()
         throws Exception
     {
         Folder folder = openFolder();

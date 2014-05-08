@@ -7,16 +7,11 @@ package com.threerings.tools.gxlate;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 
 import com.threerings.tools.gxlate.props.PropsFile;
@@ -29,25 +24,8 @@ import com.threerings.tools.gxlate.spreadsheet.Table;
 @Mojo(name="download")
 public class DownloadMojo extends BaseMojo
 {
-    public void execute ()
-        throws MojoExecutionException, MojoFailureException
-    {
-        Preconditions.checkState(failures.isEmpty());
-
-        try {
-            run();
-        } catch (Exception ex) {
-            throw new MojoExecutionException("", ex);
-        }
-
-        if (!failures.isEmpty()) {
-            throw new MojoFailureException("Some operations failed (see log)");
-        }
-    }
-
-    private List<Exception> failures = Lists.newArrayList();
-
-    private void run ()
+    @Override
+    protected void run ()
         throws Exception
     {
         Document doc = new Document();

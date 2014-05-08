@@ -5,16 +5,12 @@
 
 package com.threerings.tools.gxlate;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
@@ -38,33 +34,18 @@ public class UploadMojo extends BaseMojo
     private boolean removeRows;
 
     private Set<Index.Key> keysFound = Sets.newHashSet();
-    private List<Exception> failures = Lists.newArrayList();
 
-    public void execute ()
-        throws MojoExecutionException, MojoFailureException
+    @Override
+    protected void run ()
+        throws Exception
     {
         Preconditions.checkState(keysFound.isEmpty());
-        Preconditions.checkState(failures.isEmpty());
 
         if (checkOnly()) {
             getLog().info("Comparing English strings to spreadsheet and reporting differences. "
                 + "No changes will be made.");
         }
 
-        try {
-            run();
-        } catch (Exception ex) {
-            throw new MojoExecutionException("", ex);
-        }
-
-        if (!failures.isEmpty()) {
-            throw new MojoFailureException("Some operations failed (see log)");
-        }
-    }
-
-    private void run ()
-        throws Exception
-    {
         Document doc = new Document();
         for (PropsFile source : loadAllProps()) {
             Table table = doc.loadTable(Bundle.baseName(source.getFile().getName()));

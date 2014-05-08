@@ -10,12 +10,16 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.gdata.data.BaseEntry;
 import com.google.gdata.data.docs.DocumentListEntry;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import com.threerings.tools.gxlate.Domain.Row;
@@ -78,6 +82,10 @@ public abstract class BaseMojo extends AbstractMojo
     @Parameter()
     private List<SimpleRule> rules;
 
+    /** Accumulation of errors during execution. If any failures are present at the end, the
+     * build is failed. */
+    protected final List<Exception> failures = Lists.newArrayList();
+
     public static class SimpleRule
     {
         public String file;
@@ -121,6 +129,24 @@ public abstract class BaseMojo extends AbstractMojo
             return new Table(worksheet);
         }
     }
+
+    public final void execute ()
+        throws MojoExecutionException, MojoFailureException
+    {
+        Preconditions.checkState(failures.isEmpty());
+
+        try {
+            run();
+        } catch (Exception ex) {
+            throw new MojoExecutionException("", ex);
+        }
+
+        if (!failures.isEmpty()) {
+            throw new MojoFailureException("Some operations failed (see log)");
+        }
+    }
+
+    abstract protected void run () throws Exception;
 
     protected boolean checkOnly ()
     {
