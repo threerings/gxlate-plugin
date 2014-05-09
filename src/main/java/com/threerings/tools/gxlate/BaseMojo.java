@@ -83,6 +83,9 @@ public abstract class BaseMojo extends AbstractMojo
     private List<SimpleRule> rules;
 
     /** Derived from the input parameter {@link #languages} by the base class' execute. */
+    private final List<Language> languageList = Lists.newArrayList();
+
+    /** Derived from the input parameter {@link #languages} by the base class' execute. */
     private final Set<Language> languageSet = Sets.newHashSet();
 
     /** Accumulation of errors during execution. If any failures are present at the end, the
@@ -139,7 +142,12 @@ public abstract class BaseMojo extends AbstractMojo
         Preconditions.checkState(failures.isEmpty());
 
         for (String langCode : languages.split(",")) {
-            languageSet.add(new Language(langCode.trim()));
+            Language lang = new Language(langCode.trim());
+            if (languageSet.contains(lang)) {
+                throw new MojoExecutionException("Duplicate language in list: " + langCode);
+            }
+            languageList.add(lang);
+            languageSet.add(lang);
         }
 
         try {
@@ -163,6 +171,11 @@ public abstract class BaseMojo extends AbstractMojo
     protected Set<Language> languages ()
     {
         return languageSet;
+    }
+
+    protected List<Language> languageList ()
+    {
+        return languageList;
     }
 
     protected Folder openFolder ()
