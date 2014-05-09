@@ -73,6 +73,14 @@ public class Folder
         return feed.getEntries();
     }
 
+    /**
+     * Gets the underlying service for accessing the document.
+     */
+    public SpreadsheetService getService ()
+    {
+        return _spreadsheets;
+    }
+
     // internal, use factory
     private Folder (Iterable<DocumentListEntry> docs, SpreadsheetService spreadsheets)
     {
