@@ -78,6 +78,16 @@ public class FieldMapping
         _values.put(field, value);
     }
 
+    public String english ()
+    {
+        return _values.get(Field.ENGLISH);
+    }
+
+    public String id ()
+    {
+        return _values.get(Field.ID);
+    }
+
     /**
      * Creates a new field mapping. This is an internal constructor since normally this class is
      * only created from the {@link ProjectX} factory.

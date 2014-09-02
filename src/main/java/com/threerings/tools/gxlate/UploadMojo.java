@@ -47,6 +47,7 @@ public class UploadMojo extends BaseMojo
         }
 
         Document doc = new Document();
+        Set<Integer> unused = Sets.newHashSet();
         for (PropsFile source : loadAllProps()) {
             Table table = doc.loadTable(Bundle.baseName(source.getFile().getName()));
             Index index = new Index(table, Field.ID.getColumnName());
@@ -54,6 +55,14 @@ public class UploadMojo extends BaseMojo
                 if (genRow.status == Rules.Status.IGNORE || genRow.status == Rules.Status.OMIT) {
                     continue;
                 }
+
+                String error = DefaultTranslator.checkBraces(genRow.fields.english(), unused);
+                if (error != null) {
+                    getLog().error(String.format("String %s %s", genRow.fields.id(), error));
+                    failures.add(new Exception(genRow.fields.id()));
+                    continue;
+                }
+
                 handleRow(table, index, genRow);
             }
             if (table.needsRefresh()) {
