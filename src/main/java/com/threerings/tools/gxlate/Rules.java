@@ -67,6 +67,9 @@ public class Rules
                 break;
             }
             pos = english.indexOf('}', open) + 1;
+            if (pos == 0) {
+                break;
+            }
             bldr.append(english.substring(open, pos)).append(": <Fill in>\n");
         }
         return bldr.toString();
