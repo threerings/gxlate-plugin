@@ -5,11 +5,13 @@
 
 package com.threerings.tools.gxlate;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
@@ -24,7 +26,28 @@ import static java.lang.String.format;
 
 public class DefaultTranslator extends Translator
 {
-    public final List<Exception> failures = Lists.newArrayList();
+    public static String checkBraces (String source, Set<Integer> braces)
+    {
+        for (int pos = 0;;pos++) {
+            int open = source.indexOf('{', pos);
+            if (open == -1) {
+                break;
+            }
+            pos = source.indexOf('}', open);
+            if (pos == -1) {
+                return "has unclosed brace at character " + open;
+            }
+            String param = source.substring(open + 1, pos);
+            Integer iparam;
+            try {
+                iparam = Integer.valueOf(param);
+            } catch (NumberFormatException ex) {
+                return "has invalid brace parameter '" + param + "' at character " + open;
+            }
+            braces.add(iparam);
+        }
+        return null;
+    }
 
     public DefaultTranslator (Table table, Index index,
         Map<Index.Key, Domain.Row> generatedFields, Language language,
@@ -75,38 +98,58 @@ public class DefaultTranslator extends Translator
         final String placeholder = generatePlaceholder(sourceStr);
         Row row = _index.lookup(key);
         if (row == null) {
-            _log.error(format("Row for %s not yet in spreadsheet, using placeholder", key));
+            _error.apply(format("Row for %s not yet in spreadsheet, using placeholder", key));
+            _placeholders++;
             return placeholder;
         }
         String stem = _language.getHeaderStem();
         String newTranslation = row.getValues().get(stem);
         String oldTranslation = _existingProps == null ? null : _existingProps.getValue(id);
 
-        // don't change translations that have not been verified
         String verify = row.getValues().get(Field.VERIFY.getColumnName(_language));
-        if (verify != null && verify.trim().length() > 0) {
-            newTranslation = null;
-        }
-        if (newTranslation != null) {
-            newTranslation = newTranslation.trim();
-        }
+        String error = null;
+        Function<String, Void> log = _info;
         if (newTranslation == null) {
+            error = "untranslated";
+        } else if (verify != null && verify.trim().length() > 0) {
+            error = "unverified";
+        } else {
+            error = validate(sourceStr, newTranslation);
+            log = _error;
+        }
+
+        if (error != null) {
+            // download is blocked, return either a placeholder or the previous string and log
+            // an appropriate message
             if (oldTranslation == null) {
-                _log.info(format("String %s not yet translated, using placeholder", key));
+                log.apply(format("String %s %s; using placeholder", key, error));
+                _placeholders++;
                 return placeholder;
             } else if (oldTranslation.equals(placeholder)) {
-                _log.debug(format("String %s not yet translated, retaining placeholder", key));
+                log.apply(format("String %s %s; retaining placeholder", key, error));
+                _placeholders++;
                 return placeholder;
             } else if (isPreviousPlaceholder(oldTranslation)) {
-                _log.debug(format("Untranslated string %s changed, updating placeholder", key));
+                log.apply(format("String %s %s and EN changed; updating placeholder", key, error));
+                _placeholders++;
                 return placeholder;
-            } else {
-                _log.info(format("Translation for %s has disappeared, retaining %s",
+            } else if (newTranslation == null) {
+                // flag error, it's odd that the translation was all good then went away
+                _error.apply(format("Translation for %s has disappeared; retaining '%s'",
                     key, oldTranslation));
                 return oldTranslation;
+            } else {
+                log.apply(format("String %s %s; retaining previous", key, error));
+                _retained++;
+                return oldTranslation;
             }
-        } else if (newTranslation.isEmpty()) {
-            _log.error(format("String %s has blank translation, using placeholder", key));
+        }
+
+        newTranslation = newTranslation.trim();
+
+        if (newTranslation.isEmpty()) {
+            _error.apply(format("String %s has blank translation; using placeholder", key));
+            _placeholders++;
             return placeholder;
         } else {
             if (_gwt) {
@@ -121,9 +164,8 @@ public class DefaultTranslator extends Translator
                     try {
                         _table.updateCell(row, lastImportedHeader, Table.googleNow());
                     } catch (Exception e) {
-                        _log.error(format("Unable to update the %s for row %d",
+                        _error.apply(format("Unable to update the %s for row %d",
                             lastImportedHeader, row.getNum()));
-                        failures.add(e);
                     }
                 }
             }
@@ -146,6 +188,65 @@ public class DefaultTranslator extends Translator
         return previousStr.startsWith(_placeholderPrefix);
     }
 
+    public String validate (String english, String foreign)
+    {
+        Set<Integer> englishBraces = Sets.newHashSet();
+        String error = checkBraces(english, englishBraces);
+        if (error != null) {
+            return error;
+        }
+
+        Set<Integer> foreignBraces = Sets.newHashSet();
+        error = checkBraces(foreign, foreignBraces);
+        if (error != null) {
+            _errors++;
+            return error;
+        }
+
+        Set<Integer> diff = Sets.difference(englishBraces, foreignBraces);
+        if (diff.size() > 0) {
+            _errors++;
+            return "is missing parameter(s): " + Joiner.on(",").join(diff);
+        }
+        diff = Sets.difference(foreignBraces, englishBraces);
+        if (diff.size() > 0) {
+            _errors++;
+            return "has extra parameter(s): " + Joiner.on(",").join(diff);
+        }
+
+        return null;
+    }
+
+    public int placeholders ()
+    {
+        return _placeholders;
+    }
+
+    public int errors ()
+    {
+        return _errors;
+    }
+
+    public int retained ()
+    {
+        return _retained;
+    }
+
+    protected Function<String, Void> _error = new Function<String, Void> () {
+        @Override public Void apply (String msg) {
+            _log.error(msg);
+            _errors++;
+            return null;
+        }
+    };
+
+    protected Function<String, Void> _info = new Function<String, Void> () {
+        @Override public Void apply (String msg) {
+            _log.info(msg);
+            return null;
+        }
+    };
+
     protected final Table _table;
     protected final Index _index;
     protected final Map<Index.Key, Domain.Row> _generatedFields;
@@ -155,4 +256,7 @@ public class DefaultTranslator extends Translator
     protected boolean _checkOnly;
     protected Log _log;
     protected String _placeholderPrefix;
+    protected int _errors;
+    protected int _placeholders;
+    protected int _retained;
 }
