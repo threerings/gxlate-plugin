@@ -29,6 +29,7 @@ public class DownloadMojo extends BaseMojo
         throws Exception
     {
         Document doc = new Document();
+        int placeholders = 0, errors = 0, retained = 0;
         for (PropsFile source : loadAllProps()) {
             Table table = doc.loadTable(Bundle.baseName(source.getFile()));
             Index index = new Index(table, Field.ID.getColumnName());
@@ -50,15 +51,40 @@ public class DownloadMojo extends BaseMojo
                     }
                 }
 
+                getLog().info((dest.exists() ? "Updating" : "Creating") + " file: " + dest);
+                DefaultTranslator translator = new DefaultTranslator(
+                    table, index, generatedFields, language, existingProps);
                 try {
-                    getLog().info((dest.exists() ? "Updating" : "Creating") + " file: " + dest);
-                    source.write(dest, init(new DefaultTranslator(
-                        table, index, generatedFields, language, existingProps)));
+                    source.write(dest, init(translator));
                 } catch (IOException ex) {
                     getLog().error("Unable to write language file: " + dest);
                     failures.add(ex);
+                } finally {
+                    placeholders += translator.placeholders();
+                    errors += translator.errors();
+                    retained += translator.retained();
+                    if (translator.placeholders() > 0) {
+                        getLog().info(String.format("Used %d placeholder(s) for %s.",
+                            translator.placeholders(), language));
+                    }
+                    if (translator.retained() > 0) {
+                        getLog().info(String.format("Retained %d string(s) for %s.",
+                            translator.retained(), language));
+                    }
                 }
             }
+        }
+        if (errors > 0) {
+            failures.add(new Exception("Translation content"));
+        }
+        String placeholdersMessage = String.format("Placeholders used: %d.", placeholders);
+        if (placeholders > 0) {
+            getLog().warn(placeholdersMessage);
+        } else {
+            getLog().info(placeholdersMessage);
+        }
+        if (retained > 0) {
+            getLog().warn(String.format("Old strings retained: %d.", retained));
         }
     }
 }
