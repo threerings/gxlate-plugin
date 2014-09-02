@@ -8,7 +8,7 @@ package com.threerings.tools.gxlate;
 import java.util.Collection;
 
 /**
- * A language supported by the project x translation spreadsheet.
+ * A language for use in the translation spreadsheet.
  */
 public class Language {
     public static Language EN = new Language("en");
@@ -53,6 +53,12 @@ public class Language {
     public int hashCode ()
     {
         return _code.hashCode();
+    }
+
+    @Override
+    public String toString ()
+    {
+        return _code;
     }
 
     /**
