@@ -50,8 +50,9 @@ public class Index
     /**
      * Base class for a problem that prevents correct indexing.
      */
-    public static class Error
+    public static abstract class Error
     {
+        abstract String message ();
     }
 
     /**
@@ -66,6 +67,11 @@ public class Index
         {
             this.row1 = row1.getNum();
             this.row2 = row2.getNum();
+        }
+
+        @Override String message ()
+        {
+            return "Duplicate key, on rows " + row1 + " and " + row2;
         }
     }
 
@@ -83,6 +89,11 @@ public class Index
             this.row = row.getNum();
             this.header = header;
         }
+
+        @Override String message ()
+        {
+            return "Cell missing, row " + row + ", column name " + header;
+        }
     }
 
     /**
@@ -94,7 +105,20 @@ public class Index
 
         public IndexError (List<Error> errors)
         {
+            super(message(errors));
             this.errors = errors;
+        }
+
+        private static String message (List<Error> errors)
+        {
+            if (errors.size() == 1) {
+                return errors.get(0).message();
+            }
+            String message = "Errors occurred:\n";
+            for (Error error : errors) {
+                message += error.message() + "\n";
+            }
+            return message;
         }
 
         private static final long serialVersionUID = 1L;
